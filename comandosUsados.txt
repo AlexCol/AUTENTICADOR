@@ -1,0 +1,33 @@
+
+/*pacote para usar Postgree*/
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL -v 7.0.0
+
+/*para usar tokens jwt*/
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+
+/*pra usar entity e popular o banco a partir de classes*/
+dotnet add package Microsoft.EntityFrameworkCore -v 7.0.2
+dotnet add package Microsoft.EntityFrameworkCore.Design -v 7.0.2
+
+/* pra uso do automapper */
+dotnet add package AutoMapper
+dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
+
+/**flunt para notificações - baixado via nugget/
+
+
+////criado tudo na pasta Security, sobre segurança
+-Criada pasta Entities, com as classes de Usuários e Papeis (Claims);
+--Adicionadas as duas classes na MySqlContext;
+-Criada a pasta Token para deixar tudo sobre token nela;
+---Na subpasta TokenModel, o modelo base to token, com tudo que será usado;
+---Nas subpastas Interface e Implementation, criadas as regras para geração do token;
+-Criada a pasta repository para manipulação do Usário e Papel (Claim);
+-Criada pasta ValueObjects com classes de manipulação de dados;
+-Criada a pasta de Services para colocar as classes de Login;
+-Criada a pasta Controller, onde são criados os endpoints de acesso;
+-Criada a pasta Builder, pra colocar uma classe de extensão para paremtrizar o JWT no guilder, e então adicionada essa configuração em program
+
+/*para a migration*/
+    dotnet ef migrations add 'minhaPrimeiraMigration'
+    dotnet ef database update
