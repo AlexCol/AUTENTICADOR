@@ -16,4 +16,5 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{"Rest Api para autenticação"}"));
 
 app.UseHttpsRedirection();
+app.MapControllers();
 app.Run();

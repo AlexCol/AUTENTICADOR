@@ -9,33 +9,23 @@ using AUTENTICADOR.src.Model.Entities;
 using AUTENTICADOR.src.Repository.GenericRepository;
 using AUTENTICADOR.src.ValueObjects;
 using AutoMapper;
+using Serilog;
 
 namespace AUTENTICADOR.src.Repository.UserRepository;
 
-public class UserRepository : GenericRepository<User>, IUserRepository
-{
-	private IMapper _mapper;
+public class UserRepository : GenericRepository<User>, IUserRepository {
+	public UserRepository(PostgreContext context) : base(context) { }
 
-	public UserRepository(PostgreContext context, IMapper mapper) : base(context)
-	{
-		_mapper = mapper;
+	public User ValidadeCredentials(UserLoginVO user) {
+		return _context.Users.FirstOrDefault(u => (u.Email == user.Email) && (u.Password == user.Password)); //!senha deve vir tratada do service
 	}
 
-
-	public User ValidadeCredentials(UserLoginVO user)
-	{
-		var pass = ComputeHash(user.Password, SHA256.Create());
-		return _context.Users.FirstOrDefault(u => (u.Email == user.Email) && (u.Password == pass));
+	public User ValidadeCredentials(Guid id) {
+		return _context.Users.SingleOrDefault(u => u.id == id);
 	}
 
-	public User ValidadeCredentials(long id)
-	{
-		return _context.Users.SingleOrDefault(u => u.Id == id);
-	}
-
-	public bool RevokeToken(long Id)
-	{
-		var user = _context.Users.SingleOrDefault(u => u.Id == Id);
+	public bool RevokeToken(Guid Id) {
+		var user = _context.Users.SingleOrDefault(u => u.id == Id);
 		if (user == null) return false;
 
 		user.RefreshToken = null;
@@ -43,17 +33,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 		return true;
 	}
 
-	private string ComputeHash(string password, HashAlgorithm hashAlgorithm)
-	{
-		byte[] inputBytes = Encoding.UTF8.GetBytes(password);
-		byte[] hashedBytes = hashAlgorithm.ComputeHash(inputBytes);
-
-		var builder = new StringBuilder();
-
-		foreach (var item in hashedBytes)
-		{
-			builder.Append(item.ToString("x2"));
-		}
-		return builder.ToString();
+	public User FindByEmail(string email) {
+		return _context.Users.SingleOrDefault(u => u.Email == email);
 	}
 }

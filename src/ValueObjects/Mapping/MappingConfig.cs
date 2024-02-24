@@ -7,12 +7,9 @@ using AutoMapper;
 
 namespace AUTENTICADOR.src.ValueObjects.Mapping;
 
-public static class MappingConfig
-{
-	public static MapperConfiguration RegisterMaps()
-	{
-		var mappingCong = new MapperConfiguration(config =>
-		{
+public static class MappingConfig {
+	public static MapperConfiguration RegisterMaps() {
+		var mappingCong = new MapperConfiguration(config => {
 			config.CreateMap<User, UserLoginVO>();
 			config.CreateMap<UserLoginVO, User>();
 		});

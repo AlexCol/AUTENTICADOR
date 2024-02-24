@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace AUTENTICADOR.src.Model.Token;
 
-public class TokenModel
-{
+public class TokenModel {
 	public string Audience { get; set; }
 	public string Issuer { get; set; }
 	public string Secret { get; set; }

@@ -4,9 +4,8 @@ using Flunt.Notifications;
 
 namespace AUTENTICADOR.src.Model.Entities.Base;
 
-public class BaseEntity : Notifiable<Notification>
-{
+public class BaseEntity : Notifiable<Notification> {
 	[Key]
 	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-	public long Id { get; set; }
+	public Guid id { get; set; }
 }

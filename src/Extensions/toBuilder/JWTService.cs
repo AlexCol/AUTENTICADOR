@@ -6,13 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AUTENTICADOR.src.Extensions.toBuilder
-{
-	public static class JWTService
-	{
+namespace AUTENTICADOR.src.Extensions.toBuilder {
+	public static class JWTService {
 		//! Método para configurar o serviço JWT
-		public static void addJWTService(this WebApplicationBuilder builder)
-		{
+		public static void addJWTService(this WebApplicationBuilder builder) {
 			//! Cria uma instância de TokenModel para armazenar as configurações do token
 			var tokenModel = new TokenModel();
 
@@ -25,16 +22,13 @@ namespace AUTENTICADOR.src.Extensions.toBuilder
 			builder.Services.AddSingleton(tokenModel);
 
 			//! Configura a autenticação para usar JWT
-			builder.Services.AddAuthentication(options =>
-			{
+			builder.Services.AddAuthentication(options => {
 				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 			})
-			.AddJwtBearer(options =>
-			{
+			.AddJwtBearer(options => {
 				//! Configura os parâmetros de validação do token JWT
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
+				options.TokenValidationParameters = new TokenValidationParameters {
 					ValidateIssuer = true,
 					ValidateAudience = true,
 					ValidateLifetime = true,
@@ -47,8 +41,7 @@ namespace AUTENTICADOR.src.Extensions.toBuilder
 			});
 
 			//! Configura as políticas de autorização
-			builder.Services.AddAuthorization(auth =>
-			{
+			builder.Services.AddAuthorization(auth => {
 				//! Define uma política padrão que exige autenticação JWT
 				auth.DefaultPolicy = new AuthorizationPolicyBuilder()
 									.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)

@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace AUTENTICADOR.src.ValueObjects;
 
-public class UserLoginVO
-{
+public class UserLoginVO {
 	public string Email { get; set; }
 	public string Password { get; set; }
 }
