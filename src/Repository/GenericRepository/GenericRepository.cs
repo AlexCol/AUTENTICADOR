@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AUTENTICADOR.src.Model;
 using AUTENTICADOR.src.Model.Entities.Base;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace AUTENTICADOR.src.Repository.GenericRepository;
 
@@ -31,8 +32,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity {
 			dataset.Add(item);
 			_context.SaveChanges();
 			return item;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new InvalidDataException("Erro ao cadastrar. " + e.Message);
 		}
 	}
@@ -46,7 +46,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity {
 		return item;
 	}
 	public void Delete(Guid id) {
-		dataset.Remove(FindById(id));
+		var user = FindById(id);
+		if (user == null) throw new Exception("Usuário não encontrado ou já excluído.");
+
+		dataset.Remove(user);
 		_context.SaveChanges();
 	}
 }

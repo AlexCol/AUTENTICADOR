@@ -8,7 +8,10 @@ namespace AUTENTICADOR.src.Model.Error;
 
 public class ErrorModel {
 	public ErrorModel(string errorMessage) {
-		ErrorMessage.Add(errorMessage);
+		var errors = errorMessage.Split(";");
+		foreach (var error in errors) {
+			ErrorMessage.Add(error);
+		}
 	}
 
 	public ErrorModel(IEnumerable<string> errorMessages) {
@@ -16,4 +19,12 @@ public class ErrorModel {
 	}
 
 	public List<string> ErrorMessage { get; set; } = new List<string>();
+
+	public override string ToString() {
+		string error = "";
+		foreach (var err in ErrorMessage) {
+			error += (error == "") ? err : $";{err}";
+		}
+		return error;
+	}
 }

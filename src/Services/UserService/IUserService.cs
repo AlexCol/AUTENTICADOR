@@ -1,11 +1,11 @@
-using AUTENTICADOR.src.Model.Entities;
-using AUTENTICADOR.src.Services.Generic;
 using AUTENTICADOR.src.ValueObjects;
 
 namespace AUTENTICADOR.src.Services.UserService;
 
-public interface IUserService : IGenericService<User> {
-	User ValidadeCredentials(UserLoginVO user);
-	User ValidadeCredentials(Guid id);
-	bool RevokeToken(Guid Id);
+public interface IUserService {
+	public UserResponseVO FindById(Guid id);
+	public List<UserResponseVO> FindAll();
+	public UserResponseVO Create(UserRequestVO user);
+	public UserResponseVO Update(UserRequestVO user);
+	public void Delete(Guid id);
 }

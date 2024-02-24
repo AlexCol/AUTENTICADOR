@@ -40,6 +40,8 @@ public class User : BaseEntity {
 
 	[Column("sn_activated")]
 	public Boolean Activated { get; set; }
+	[Column("ds_activation_token")]
+	public string ActivationToken { get; set; }
 
 	private void Validate() {
 		var contract = new Contract<User>()
@@ -49,12 +51,10 @@ public class User : BaseEntity {
 				.IsGreaterOrEqualsThan(FirstName, 3, "Nome", "Nome deve ter pelo menos tres caracteres.")
 				.IsNotNullOrWhiteSpace(LastName, "Sobrenome", "Sobrenome precisa estar preenchido.")
 				.IsNotNullOrWhiteSpace(Password, "Senha", "A senha é obrigatória.")
-				.IsGreaterOrEqualsThan(Password, 5, "Senha", "Senha deve conter pelo menos 5 caracteres")
+				.IsGreaterOrEqualsThan(Password, 5, "Senha", "Senha deve conter pelo menos 5 caracteres.")
 				.IsTrue(Password.HasUpperCase(), "Senha", "A senha deve conter carecteres maiúsculos.")
 				.IsTrue(Password.HasLowerCase(), "Senha", "A senha deve conter carecteres minúsculos.")
-				.IsTrue(Password.HasSpecialCharacter(), "Senha", "A senha deve conter carecteres eseciais.")
-				;
-
+				.IsTrue(Password.HasSpecialCharacter(), "Senha", "A senha deve conter carecteres especiais.");
 		;
 		AddNotifications(contract);
 	}

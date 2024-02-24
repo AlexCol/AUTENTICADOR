@@ -2,6 +2,7 @@ Migrations
 bin
 obj
 .vscode
+appsettings.json
 
 */Migrations
 */bin

@@ -29,30 +29,34 @@ public class PostgreContext : DbContext {
 				.HasIndex(u => u.RefreshToken)
 				.HasDatabaseName("idx_refresh");
 		modelBuilder.Entity<User>()
+				.HasIndex(u => u.ActivationToken)
+				.IsUnique()
+				.HasDatabaseName("uk_activateToken");
+		modelBuilder.Entity<User>()
 				.Property(u => u.Password).IsRequired();
 
 
-		var password = ComputeHash("1234", SHA256.Create());
-		var newUser = new User("eu_axil@yahoo.com.br", "Alexandre", "Coletti", password, null, DateTime.Now);
-		newUser.id = Guid.NewGuid();
-		newUser.Activated = true;
-		modelBuilder.Entity<User>().HasData(newUser);
+		// var password = ComputeHash("1234", SHA256.Create());
+		// var newUser = new User("eu_axil@yahoo.com.br", "Alexandre", "Coletti", password, null, DateTime.Now);
+		// newUser.id = Guid.NewGuid();
+		// newUser.Activated = true;
+		// modelBuilder.Entity<User>().HasData(newUser);
 
-		password = ComputeHash("1234", SHA256.Create());
-		newUser = new User("eu_axill@yahoo.com.br", "Bernard", "Coletti", password, "afa6ef16se5g165rg165rg165", DateTime.Now);
-		newUser.id = Guid.NewGuid();
-		modelBuilder.Entity<User>().HasData(newUser);
+		// password = ComputeHash("1234", SHA256.Create());
+		// newUser = new User("eu_axill@yahoo.com.br", "Bernard", "Coletti", password, "afa6ef16se5g165rg165rg165", DateTime.Now);
+		// newUser.id = Guid.NewGuid();
+		// modelBuilder.Entity<User>().HasData(newUser);
 	}
 
-	private string ComputeHash(string password, HashAlgorithm hashAlgorithm) {
-		byte[] inputBytes = Encoding.UTF8.GetBytes(password);
-		byte[] hashedBytes = hashAlgorithm.ComputeHash(inputBytes);
+	// private string ComputeHash(string password, HashAlgorithm hashAlgorithm) {
+	// 	byte[] inputBytes = Encoding.UTF8.GetBytes(password);
+	// 	byte[] hashedBytes = hashAlgorithm.ComputeHash(inputBytes);
 
-		var builder = new StringBuilder();
+	// 	var builder = new StringBuilder();
 
-		foreach (var item in hashedBytes) {
-			builder.Append(item.ToString("x2"));
-		}
-		return builder.ToString();
-	}
+	// 	foreach (var item in hashedBytes) {
+	// 		builder.Append(item.ToString("x2"));
+	// 	}
+	// 	return builder.ToString();
+	// }
 }
