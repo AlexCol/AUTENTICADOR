@@ -11,7 +11,7 @@ Sistema para controle de autenticações.
 2.1. Caso não deseje um 'frontend' para a recuperação da senha e ativação da conta, pode mandar os links diretamente para os endpoints responsaveis por isso (já é feito isso nos links do projeto), mas para a ativação, deve ser mudado para 'Get', e das senhas somente via Postman ou similar, pois precisa ser enviada a nova senha e confirmação de senha.
 3. Abra o projeto no Visual Studio Code e deixe a IDE instalar as dependencias necessárias.
 4. Execute o comando:
-> dotnet whacth run
+> dotnet watch run
 
 # Fluxo para testes 
 #### utilizado {{baseUrl}} para subistituir o que for informado em launchSettings.json
@@ -22,7 +22,7 @@ Sistema para controle de autenticações.
 Body:
 
 > {
-     "Email": "seu@email.com",
+     "Email": "seu@email.com.br",
      "FirstName": "Nome",
      "LastName": "Sobrenome",
      "Password": "Senha",
@@ -112,7 +112,7 @@ Reenvia o token para ativação de conta (caso tenha dado algum problema e o usu
 
 Body:
 >{
-    "email": "eu_axil@yahoo.com.br"
+    "email": "seu@email.com.br"
 }
 
 Envia um email com um link (e token) para atualização do email.
@@ -123,7 +123,7 @@ Envia um email com um link (e token) para atualização do email.
 body:
 >{
     "password": "suaSenha",
-    "confirmpassword": "seaSenha"
+    "confirmpassword": "suaSenha"
 }
 
 Token é o Activationtoken (caso se busque no banco de dados), ele é enviado no email na requisição do RecoverPasswordRequest.
