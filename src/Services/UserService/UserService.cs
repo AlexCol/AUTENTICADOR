@@ -19,23 +19,6 @@ public class UserService : IUserService {
 		_mapper = mapper;
 	}
 
-	//!validate user
-	private User ValidateUserData(UserRequestVO request) {
-		var newUser = new User(
-			request.Email,
-			request.FirstName,
-			request.LastName,
-			request.Password,
-			null,
-			DateTime.Now
-		);
-		if (!newUser.IsValid) {
-			var error = new ErrorModel(newUser.Notifications.convertToEnumerable());
-			throw new Exception(error.ToString());
-		}
-		return newUser;
-	}
-
 	//!findby id
 	public UserResponseVO FindById(Guid id) {
 		return _mapper.Map<UserResponseVO>(_repository.FindById(id));
@@ -49,8 +32,13 @@ public class UserService : IUserService {
 		var emailUser = _repository.FindByEmail(userRequest.Email);
 		if (emailUser != null) throw new Exception("Email já cadastrado!");
 
-		var newUser = ValidateUserData(userRequest);
+		userRequest.ValidateAll();
+		if (!userRequest.IsValid) {
+			var error = new ErrorModel(userRequest.Notifications.convertToEnumerable());
+			throw new Exception(error.ToString());
+		}
 
+		var newUser = _mapper.Map<User>(userRequest);
 		newUser.Password = SecutiryUtils.ComputeHash(newUser.Password, SHA256.Create());
 		newUser.ActivationToken = _repository.RegenActivationToken();
 
@@ -62,24 +50,17 @@ public class UserService : IUserService {
 		var current = _repository.FindById(userRequest.id);
 		if (current == null || !current.Activated) throw new Exception("Usuário não encontrado ou inativo, não pode ser alterado!");
 
-		bool updatePassword = userRequest.Password != null;
-
-		userRequest.Email = current.Email;
-		userRequest.FirstName = userRequest.FirstName != null ? userRequest.FirstName : current.FirstName;
-		userRequest.LastName = userRequest.LastName != null ? userRequest.LastName : current.LastName;
-		userRequest.Password = updatePassword ? userRequest.Password : "1234@Aa"; //se não atualizar senha, colocar uma qualquer pra não dar erro ao validar
-
-		var user = ValidateUserData(userRequest); //dar erro se algum dos novos dados não estiver correto
-		user.id = userRequest.id;
-		user.Activated = current.Activated;
-
-		if (updatePassword) { //atualizando senha
-			user.Password = SecutiryUtils.ComputeHash(user.Password, SHA256.Create());
-		} else {
-			user.Password = current.Password;
+		userRequest.ValidateFilledFields();
+		if (!userRequest.IsValid) {
+			var error = new ErrorModel(userRequest.Notifications.convertToEnumerable());
+			throw new Exception(error.ToString());
 		}
 
-		return _mapper.Map<UserResponseVO>(_repository.Update(user));
+		current.FirstName = userRequest.FirstName != null ? userRequest.FirstName : current.FirstName;
+		current.LastName = userRequest.LastName != null ? userRequest.LastName : current.LastName;
+		current.Password = userRequest.Password != null ? SecutiryUtils.ComputeHash(userRequest.Password, SHA256.Create()) : current.Password;
+
+		return _mapper.Map<UserResponseVO>(_repository.Update(current));
 	}
 
 	//!delete

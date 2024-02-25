@@ -1,3 +1,4 @@
+using AUTENTICADOR.src.Extensions.toFluntNotifications;
 using AUTENTICADOR.src.Model.Error;
 using AUTENTICADOR.src.Services.EmailService;
 using AUTENTICADOR.src.Services.Login;
@@ -54,7 +55,6 @@ public class AuthController : ControllerBase {
 	[HttpPut]
 	[Route("activate")]
 	public IActionResult Activate([FromQuery] string t) {
-
 		try {
 			_service.ActivateUser(t);
 		} catch (Exception e) {
@@ -96,9 +96,10 @@ public class AuthController : ControllerBase {
 			Password = userRequest.Password,
 			ConfirmPassword = userRequest.ConfirmPassword
 		};
+		passwords.ValidateFilledFields();
+		if (!passwords.IsValid) return BadRequest(new ErrorModel(passwords.Notifications.convertToEnumerable()));
 
 		try {
-			ValidaSenhas(passwords);
 			_service.ResetPassword(token, passwords.Password);
 			return Ok("Senha alterada.");
 		} catch (Exception e) {
@@ -120,19 +121,5 @@ public class AuthController : ControllerBase {
 		var result = _service.RevokeToken(id);
 
 		return Ok("Token revogado.");
-	}
-	//! ////////////////////////////////////////////////////////////////////////////////////
-	//? bloco com funções de apoio
-	//! ////////////////////////////////////////////////////////////////////////////////////	
-	private void ValidaSenhas(UserRequestVO request) {
-		if (
-				(request == null) ||
-				(request.Password == null && request.ConfirmPassword != null) ||
-				(request.Password != null && request.ConfirmPassword == null) ||
-				(request.Password == null && request.ConfirmPassword == null) ||
-				(request.Password != request.ConfirmPassword)
-			) {
-			throw new Exception("Senha e confirmação de senha não conferem.");
-		}
 	}
 }

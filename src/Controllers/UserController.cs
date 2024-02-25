@@ -28,12 +28,11 @@ public class UserController : ControllerBase {
 	[AllowAnonymous]
 	[Route("register")]
 	public IActionResult Register([FromBody] UserRequestVO user, [FromQuery] string origin) {
-		if (user == null || user.Email == null || user.Password == null || user.ConfirmPassword == null) {
+		if (user == null) {
 			return BadRequest(new ErrorModel("Dados inválidos."));
 		}
-		if (user.Password != user.ConfirmPassword) {
-			return BadRequest(new ErrorModel("Senha e confirmação de senha não conferem."));
-		}
+		user.ValidateAll();
+		if (!user.IsValid) return BadRequest(new ErrorModel(user.Notifications.convertToEnumerable()));
 
 		UserResponseVO userCreated;
 		try {
@@ -61,8 +60,10 @@ public class UserController : ControllerBase {
 	[HttpPut]
 	[Route("")]
 	public IActionResult Update([FromBody] UserRequestVO request) {
+		request.ValidateFilledFields();
+		if (!request.IsValid) return BadRequest(new ErrorModel(request.Notifications.convertToEnumerable()));
+
 		try {
-			ValidaSenhas(request);
 			var id = getIdFromToken();
 			request.id = id;
 			return Ok(_service.Update(request));
@@ -81,7 +82,6 @@ public class UserController : ControllerBase {
 		} catch (Exception e) {
 			return BadRequest(new ErrorModel(e.Message));
 		}
-
 		return NoContent();
 	}
 
@@ -93,15 +93,5 @@ public class UserController : ControllerBase {
 		if (claim == null || claim.Value == null) throw new Exception("Token invalido, ou usuário não existe.");
 		Guid.TryParse(claim.Value, out Guid id);
 		return id;
-	}
-	private void ValidaSenhas(UserRequestVO request) {
-		if (
-				(request == null) ||
-				(request.Password == null && request.ConfirmPassword != null) ||
-				(request.Password != null && request.ConfirmPassword == null) ||
-				(request.Password != request.ConfirmPassword)
-			) {
-			throw new Exception("Senha e confirmação de senha não conferem.");
-		}
 	}
 }

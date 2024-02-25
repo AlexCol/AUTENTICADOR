@@ -45,6 +45,7 @@ public class LoginService : ILoginService {
 		var refreshToken = _tokenService.GenerateRefreshToken();
 		user.RefreshToken = refreshToken;
 		user.RefreshTokenExpiryTime = DateTime.Now.ToLocalTime().AddDays(_tokenModel.DaysToExpire);
+		user.ActivationToken = null;
 
 		_userRepository.Update(user);
 
@@ -109,6 +110,7 @@ public class LoginService : ILoginService {
 
 		if (user == null) throw new Exception("Usuário não encontrado.");
 		if (user.Activated && !recoveringPass) throw new Exception("Usuário já ativado.");
+		if (!user.Activated && recoveringPass) throw new Exception("Usuário Inativo, não pode mudar a senha. Realize primeiro a ativação do cadastro.");
 
 		user.ActivationToken = _userRepository.RegenActivationToken();
 		_userRepository.Update(user);
@@ -116,15 +118,13 @@ public class LoginService : ILoginService {
 	//!reset password
 	public void ResetPassword(string token, string password) {
 		var user = _userRepository.FindByActivationToken(token);
-		if (user == null) throw new Exception("Usuário não encontrado.");
+		if (user == null) throw new Exception("Link Inválido");
 
-		var userToValidate = new User(user.Email, user.FirstName, user.LastName, password, user.RefreshToken, user.RefreshTokenExpiryTime);
-		if (!userToValidate.IsValid) {
-			var error = new ErrorModel(user.Notifications.convertToEnumerable());
-			throw new Exception(error.ToString());
-		}
+		var newPassword = SecutiryUtils.ComputeHash(password, SHA256.Create());
+		if (user.Password == newPassword) throw new Exception("A senha nova não pode ser mesma que a atual.");
+
 		user.ActivationToken = null;
-		user.Password = SecutiryUtils.ComputeHash(password, SHA256.Create()); ;
+		user.Password = newPassword;
 
 		_userRepository.Update(user);
 	}
