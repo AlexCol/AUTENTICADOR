@@ -20,4 +20,9 @@ public static class MyStringExtensions {
 		if (str == null) return false;
 		return str.Any(ch => !char.IsLetterOrDigit(ch));
 	}
+
+	public static bool HasNumber(this string str) {
+		if (str == null) return false;
+		return str.Any(char.IsDigit);
+	}
 }

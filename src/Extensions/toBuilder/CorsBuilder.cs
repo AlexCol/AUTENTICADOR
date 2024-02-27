@@ -8,6 +8,7 @@ namespace AUTENTICADOR.src.Extensions.toBuilder;
 public static class CorsBuilder {
 	public static void AddCors(this WebApplicationBuilder builder) {
 		//! adicionando liberação para que se permita o consumo da API por outra origem que não C# e fora do dominio
+		//? precisa depois adicionar o useCors no app
 		builder.Services.AddCors(opt => opt.AddDefaultPolicy(build => {
 			build
 							.AllowAnyOrigin()

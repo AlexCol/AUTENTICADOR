@@ -27,6 +27,7 @@ public class UserRequestVO : Notifiable<Notification> {
 				.IsGreaterOrEqualsThan(Password, 5, "Senha", "Senha deve conter pelo menos 5 caracteres.")
 				.IsTrue(Password.HasUpperCase(), "Senha", "A senha deve conter carecteres maiúsculos.")
 				.IsTrue(Password.HasLowerCase(), "Senha", "A senha deve conter carecteres minúsculos.")
+				.IsTrue(Password.HasNumber(), "Senha", "A senha deve conter números.")
 				.IsTrue(Password.HasSpecialCharacter(), "Senha", "A senha deve conter carecteres especiais.")
 				.IsTrue(Password == ConfirmPassword, "Senha", "A senha e sua confirmação devem ser iguais.");
 		;

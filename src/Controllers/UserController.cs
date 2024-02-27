@@ -42,7 +42,7 @@ public class UserController : ControllerBase {
 			return BadRequest(new ErrorModel(e.Message));
 		}
 
-		return Ok(userCreated);
+		return Ok(new { Success = "Usuário criado. Favor acessar seu email para acessar o link de ativação." });
 	}
 
 
