@@ -36,7 +36,7 @@ public class EmailService : IEmailService {
 		sendEmail(emailTo, subject, body);
 	}
 
-	public void sendRecoverPasswordEmail(string email) {
+	public void sendRecoverPasswordEmail(string email, string origin) {
 		var user = _userRepo.FindByEmail(email);
 
 		var emailTo = user.Email;
@@ -44,6 +44,7 @@ public class EmailService : IEmailService {
 
 		var linkRecuperaConta = _configuration.GetValue<string>("PaginaDeRecuperacao");
 		linkRecuperaConta = linkRecuperaConta.Replace("<token>", user.ActivationToken);
+		linkRecuperaConta = linkRecuperaConta.Replace("<origin>", origin);
 
 		var body = "";
 		body += "<h1>Recupeção de Senha!</h1>";

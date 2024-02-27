@@ -97,7 +97,7 @@ public class LoginService : ILoginService {
 		var user = _userRepository.FindByActivationToken(token);
 		Log.Error(token);
 
-		if (user == null) throw new Exception("Link Inválido");
+		if (user == null) throw new Exception("Link não é mais válido.");
 
 		user.Activated = true;
 		user.ActivationToken = null;

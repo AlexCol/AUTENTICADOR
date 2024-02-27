@@ -77,11 +77,11 @@ public class AuthController : ControllerBase {
 
 	[HttpPut]
 	[Route("recover_password")]
-	public IActionResult RecoverPassword([FromBody] UserLoginVO auth) {
+	public IActionResult RecoverPassword([FromBody] UserLoginVO auth, [FromQuery] string origin) {
 
 		try {
 			_service.RefreshActivationToken(auth.Email, true);
-			_email.sendRecoverPasswordEmail(auth.Email);
+			_email.sendRecoverPasswordEmail(auth.Email, origin);
 		} catch (Exception e) {
 			return BadRequest(new ErrorModel(e.Message));
 		}
