@@ -2,6 +2,7 @@ using AUTENTICADOR.src.Extensions.toFluntNotifications;
 using AUTENTICADOR.src.Model.Error;
 using AUTENTICADOR.src.Services.EmailService;
 using AUTENTICADOR.src.Services.Login;
+using AUTENTICADOR.src.Utils.Secutiry;
 using AUTENTICADOR.src.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,11 @@ namespace AUTENTICADOR.src.Controllers;
 public class AuthController : ControllerBase {
 	private readonly ILoginService _service;
 	private readonly IEmailService _email;
-	public AuthController(ILoginService service, IEmailService email) {
+	private readonly IConfiguration _config;
+	public AuthController(ILoginService service, IEmailService email, IConfiguration config) {
 		_service = service;
 		_email = email;
+		_config = config;
 	}
 
 	//! ////////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +27,15 @@ public class AuthController : ControllerBase {
 	//! ////////////////////////////////////////////////////////////////////////////////////	
 	[HttpPost]
 	[Route("signin")]
-	public IActionResult Signin([FromBody] UserLoginVO user) {
+	public IActionResult Signin([FromBody] CryptedDataVO requestData) {
+		UserLoginVO user;
+		try {
+			user = SecutiryUtils.Decrypt<UserLoginVO>(requestData.Data, _config["Cripto:Secret"]);
+		} catch (Exception e) {
+			return BadRequest(new ErrorModel(e.Message));
+		}
+
+
 		if (user == null || user.Email == null || user.Password == null)
 			return BadRequest(new ErrorModel("Solicitação invalida."));
 

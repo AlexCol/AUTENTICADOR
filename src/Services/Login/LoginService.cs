@@ -30,13 +30,13 @@ public class LoginService : ILoginService {
 	}
 
 	public AuthVO ValidadeCredentials(UserLoginVO userCredentials) {
-		if (userCredentials == null) return new AuthVO(null, null, "Não enviados dados para autenticação.");
+		if (userCredentials == null) return new AuthVO("Não enviados dados para autenticação.");
 
 		userCredentials.Password = SecutiryUtils.ComputeHash(userCredentials.Password, SHA256.Create());
 		var user = _userRepository.ValidadeCredentials(userCredentials);
-		if (user == null) return new AuthVO(null, null, "Usuário ou senha invalidos.");
+		if (user == null) return new AuthVO("Usuário ou senha invalidos.");
 
-		if (!user.Activated) return new AuthVO(null, null, "Usuário inativo. Verificar seu email e clicar no link para ativação da conta.");
+		if (!user.Activated) return new AuthVO("Usuário inativo. Verificar seu email e clicar no link para ativação da conta.");
 
 		var claims = new List<Claim>() {
 						new Claim("UserId", user.id.ToString())
@@ -51,8 +51,7 @@ public class LoginService : ILoginService {
 
 		return new AuthVO(
 			accessToken,
-			refreshToken,
-			null
+			refreshToken
 		);
 	}
 
@@ -62,7 +61,7 @@ public class LoginService : ILoginService {
 		var claims = _tokenService.GetClaimsFromExpiredToken(accessToken);
 
 		var idClaim = claims.FirstOrDefault(c => c.Type == "UserId");
-		if (idClaim == null) return new AuthVO(null, null, "Id do usuário não encontrado.");
+		if (idClaim == null) return new AuthVO("Id do usuário não encontrado.");
 
 		Guid.TryParse(idClaim.Value, out Guid id);
 		var user = _userRepository.FindById(id);
@@ -72,7 +71,7 @@ public class LoginService : ILoginService {
 			user.RefreshToken != refreshToken || //refresh token invalido
 			user.RefreshTokenExpiryTime <= DateTime.Now) //data do refreshtoken expirada
 		{
-			return new AuthVO(null, null, "Favor realizar novo login.");
+			return new AuthVO("Favor realizar novo login.");
 		}
 
 		accessToken = _tokenService.GenerateAccesToken(claims);
@@ -83,8 +82,7 @@ public class LoginService : ILoginService {
 
 		return new AuthVO(
 			accessToken,
-			refreshToken,
-			null
+			refreshToken
 		);
 	}
 

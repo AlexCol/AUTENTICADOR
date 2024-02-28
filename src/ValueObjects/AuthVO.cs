@@ -7,10 +7,13 @@ using AUTENTICADOR.src.Model.Error;
 namespace AUTENTICADOR.src.ValueObjects;
 
 public class AuthVO {
-	public AuthVO(string accessToken, string refreshToken, string errorMessage) {
+	public AuthVO(string errorMessage) {
+		ErrorMessage = errorMessage;
+	}
+
+	public AuthVO(string accessToken, string refreshToken) {
 		AccessToken = accessToken;
 		RefreshToken = refreshToken;
-		ErrorMessage = errorMessage;
 	}
 
 	public string AccessToken { get; set; }
