@@ -6,8 +6,8 @@ using AUTENTICADOR.src.Model.Entities;
 using AUTENTICADOR.src.Model.Error;
 using AUTENTICADOR.src.Model.Token;
 using AUTENTICADOR.src.Repository.UserRepository;
+using AUTENTICADOR.src.Services.CryptoService;
 using AUTENTICADOR.src.Services.TokenService;
-using AUTENTICADOR.src.Utils.Secutiry;
 using AUTENTICADOR.src.ValueObjects;
 using AutoMapper;
 using Serilog;
@@ -21,18 +21,20 @@ public class LoginService : ILoginService {
 	private readonly ITokenService _tokenService;
 	private readonly IUserRepository _userRepository;
 	private readonly IMapper _mapper;
+	private readonly ICryptoService _crypto;
 
-	public LoginService(TokenModel tokenModel, IUserRepository userRepository, ITokenService tokenService, IMapper mapper) {
+	public LoginService(TokenModel tokenModel, IUserRepository userRepository, ITokenService tokenService, IMapper mapper, ICryptoService crypto) {
 		_tokenModel = tokenModel;
 		_userRepository = userRepository;
 		_tokenService = tokenService;
 		_mapper = mapper;
+		_crypto = crypto;
 	}
 
 	public AuthVO ValidadeCredentials(UserLoginVO userCredentials) {
 		if (userCredentials == null) return new AuthVO("Não enviados dados para autenticação.");
 
-		userCredentials.Password = SecutiryUtils.ComputeHash(userCredentials.Password, SHA256.Create());
+		userCredentials.Password = _crypto.ComputeHash(userCredentials.Password, SHA256.Create());
 		var user = _userRepository.ValidadeCredentials(userCredentials);
 		if (user == null) return new AuthVO("Usuário ou senha invalidos.");
 
@@ -118,7 +120,7 @@ public class LoginService : ILoginService {
 		var user = _userRepository.FindByActivationToken(token);
 		if (user == null) throw new Exception("Link Inválido");
 
-		var newPassword = SecutiryUtils.ComputeHash(password, SHA256.Create());
+		var newPassword = _crypto.ComputeHash(password, SHA256.Create());
 		if (user.Password == newPassword) throw new Exception("A senha nova não pode ser mesma que a atual.");
 
 		user.ActivationToken = null;

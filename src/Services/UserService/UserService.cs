@@ -4,7 +4,7 @@ using AUTENTICADOR.src.Extensions.toUserRepo;
 using AUTENTICADOR.src.Model.Entities;
 using AUTENTICADOR.src.Model.Error;
 using AUTENTICADOR.src.Repository.UserRepository;
-using AUTENTICADOR.src.Utils.Secutiry;
+using AUTENTICADOR.src.Services.CryptoService;
 using AUTENTICADOR.src.ValueObjects;
 using AutoMapper;
 using Serilog;
@@ -14,9 +14,11 @@ namespace AUTENTICADOR.src.Services.UserService;
 public class UserService : IUserService {
 	private readonly IUserRepository _repository;
 	private readonly IMapper _mapper;
-	public UserService(IUserRepository repository, IMapper mapper) {
+	private readonly ICryptoService _crypto;
+	public UserService(IUserRepository repository, IMapper mapper, ICryptoService crypto) {
 		_repository = repository;
 		_mapper = mapper;
+		_crypto = crypto;
 	}
 
 	//!findby id
@@ -39,7 +41,7 @@ public class UserService : IUserService {
 		}
 
 		var newUser = _mapper.Map<User>(userRequest);
-		newUser.Password = SecutiryUtils.ComputeHash(newUser.Password, SHA256.Create());
+		newUser.Password = _crypto.ComputeHash(newUser.Password, SHA256.Create());
 		newUser.ActivationToken = _repository.RegenActivationToken();
 
 		return _mapper.Map<UserResponseVO>(_repository.Create(newUser));
@@ -58,7 +60,7 @@ public class UserService : IUserService {
 
 		current.FirstName = userRequest.FirstName != null ? userRequest.FirstName : current.FirstName;
 		current.LastName = userRequest.LastName != null ? userRequest.LastName : current.LastName;
-		current.Password = userRequest.Password != null ? SecutiryUtils.ComputeHash(userRequest.Password, SHA256.Create()) : current.Password;
+		current.Password = userRequest.Password != null ? _crypto.ComputeHash(userRequest.Password, SHA256.Create()) : current.Password;
 
 		return _mapper.Map<UserResponseVO>(_repository.Update(current));
 	}

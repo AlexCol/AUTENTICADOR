@@ -1,6 +1,7 @@
 using AUTENTICADOR.src.Extensions.toFluntNotifications;
 using AUTENTICADOR.src.Model.Entities;
 using AUTENTICADOR.src.Model.Error;
+using AUTENTICADOR.src.Services.CryptoService;
 using AUTENTICADOR.src.Services.EmailService;
 using AUTENTICADOR.src.Services.UserService;
 using AUTENTICADOR.src.ValueObjects;
@@ -16,9 +17,11 @@ namespace AUTENTICADOR.src.Controllers;
 public class UserController : ControllerBase {
 	private IUserService _service;
 	private IEmailService _email;
-	public UserController(IUserService service, IEmailService email) {
+	private ICryptoService _crypto;
+	public UserController(IUserService service, IEmailService email, ICryptoService crypto) {
 		_service = service;
 		_email = email;
+		_crypto = crypto;
 	}
 
 	//! ////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +30,9 @@ public class UserController : ControllerBase {
 	[HttpPost]
 	[AllowAnonymous]
 	[Route("register")]
-	public IActionResult Register([FromBody] UserRequestVO user, [FromQuery] string origin) {
+	public IActionResult Register([FromBody] CryptedDataVO registerRequest, [FromQuery] string origin) {
+		UserRequestVO user = _crypto.Decrypt<UserRequestVO>(registerRequest.Data);
+
 		if (user == null) {
 			return BadRequest(new ErrorModel("Dados inválidos."));
 		}

@@ -11,7 +11,11 @@ namespace AUTENTICADOR.src.Extensions.toBuilder;
 public static class DependenciesApp {
 	public static void addDependencies(this WebApplication app) {
 		//!adicionando configurações padrão
-		app.UseCors(); //para ativar o cors
+		//app.UseCors(); //para ativar o cors
+		app.UseCors("CORSAllowLocalHost");
+
+		app.UseAuthentication();
+		app.UseAuthorization();
 
 		app.UseSwagger();
 		app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{"Rest Api para autenticação"}"));

@@ -1,6 +1,7 @@
 using AUTENTICADOR.src.extensions.toBuilder;
 using AUTENTICADOR.src.Repository.GenericRepository;
 using AUTENTICADOR.src.Repository.UserRepository;
+using AUTENTICADOR.src.Services.CryptoService;
 using AUTENTICADOR.src.Services.EmailService;
 using AUTENTICADOR.src.Services.Login;
 using AUTENTICADOR.src.Services.TokenService;
@@ -31,6 +32,7 @@ public static class DependenciesBuilder {
 		builder.Services.AddScoped<ILoginService, LoginService>();
 		builder.Services.AddScoped<IUserService, UserService>();
 		builder.Services.AddScoped<IEmailService, EmailService>();
+		builder.Services.AddScoped<ICryptoService, CryptoService>();
 
 	}
 }

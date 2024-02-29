@@ -1,12 +1,11 @@
 using AUTENTICADOR.src.Extensions.toFluntNotifications;
 using AUTENTICADOR.src.Model.Error;
+using AUTENTICADOR.src.Services.CryptoService;
 using AUTENTICADOR.src.Services.EmailService;
 using AUTENTICADOR.src.Services.Login;
-using AUTENTICADOR.src.Utils.Secutiry;
 using AUTENTICADOR.src.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace AUTENTICADOR.src.Controllers;
 
@@ -15,11 +14,11 @@ namespace AUTENTICADOR.src.Controllers;
 public class AuthController : ControllerBase {
 	private readonly ILoginService _service;
 	private readonly IEmailService _email;
-	private readonly IConfiguration _config;
-	public AuthController(ILoginService service, IEmailService email, IConfiguration config) {
+	private readonly ICryptoService _cripto;
+	public AuthController(ILoginService service, IEmailService email, ICryptoService cripto) {
 		_service = service;
 		_email = email;
-		_config = config;
+		_cripto = cripto;
 	}
 
 	//! ////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +29,7 @@ public class AuthController : ControllerBase {
 	public IActionResult Signin([FromBody] CryptedDataVO requestData) {
 		UserLoginVO user;
 		try {
-			user = SecutiryUtils.Decrypt<UserLoginVO>(requestData.Data, _config["Cripto:Secret"]);
+			user = _cripto.Decrypt<UserLoginVO>(requestData.Data);
 		} catch (Exception e) {
 			return BadRequest(new ErrorModel(e.Message));
 		}
@@ -132,5 +131,12 @@ public class AuthController : ControllerBase {
 		var result = _service.RevokeToken(id);
 
 		return Ok("Token revogado.");
+	}
+
+	[HttpGet]
+	[Authorize]
+	[Route("")]
+	public IActionResult CheckAuth() {
+		return Ok("Autorizado");
 	}
 }
