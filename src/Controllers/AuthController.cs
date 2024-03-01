@@ -100,7 +100,8 @@ public class AuthController : ControllerBase {
 	[HttpPut]
 	[AllowAnonymous]
 	[Route("newpassword")]
-	public IActionResult ResetPassword([FromBody] UserRequestVO userRequest, [FromQuery] string t) {
+	public IActionResult ResetPassword([FromBody] CryptedDataVO requestData, [FromQuery] string t) {
+		UserRequestVO userRequest = _cripto.Decrypt<UserRequestVO>(requestData.Data);
 		var token = t;
 		var passwords = new UserRequestVO() { //pra garantir que o usuario não mandou outros dados juntos
 			Password = userRequest.Password,

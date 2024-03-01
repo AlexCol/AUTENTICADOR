@@ -59,19 +59,23 @@ public class UserController : ControllerBase {
 	public IActionResult findProfile() {
 		var id = getIdFromToken();
 		var user = _service.FindById(id);
-		return Ok(user);
+		var result = _crypto.Encrypt<UserResponseVO>(user);
+		return Ok(result);
 	}
 
 	[HttpPut]
 	[Route("")]
-	public IActionResult Update([FromBody] UserRequestVO request) {
+	public IActionResult Update([FromBody] CryptedDataVO updateRequest) {
+		var request = _crypto.Decrypt<UserRequestVO>(updateRequest.Data);
 		request.ValidateFilledFields();
 		if (!request.IsValid) return BadRequest(new ErrorModel(request.Notifications.convertToEnumerable()));
 
 		try {
 			var id = getIdFromToken();
 			request.id = id;
-			return Ok(_service.Update(request));
+			var user = _service.Update(request);
+			var result = _crypto.Encrypt<UserResponseVO>(user);
+			return Ok(result);
 		} catch (Exception e) {
 			return BadRequest(new ErrorModel(e.Message));
 		}

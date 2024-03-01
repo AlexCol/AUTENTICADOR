@@ -71,9 +71,12 @@ public class CryptoService : ICryptoService {
 			using (MemoryStream msEncrypt = new MemoryStream())
 			using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write)) {
 				using (StreamWriter swEncrypt = new StreamWriter(csEncrypt)) {
-					// string jsonData = JsonConvert.SerializeObject(data);
-					// swEncrypt.Write(jsonData);
-					swEncrypt.Write(data);
+					if (typeof(T) == typeof(string))
+						swEncrypt.Write(data);
+					else {
+						string jsonData = JsonConvert.SerializeObject(data);
+						swEncrypt.Write(jsonData);
+					}
 				}
 
 				byte[] encryptedBytes = msEncrypt.ToArray();
