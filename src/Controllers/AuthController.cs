@@ -42,24 +42,7 @@ public class AuthController : ControllerBase {
 		if (token.ErrorMessage != null)
 			return BadRequest(new ErrorModel(token.ErrorMessage));
 
-		return Ok(new { token.AccessToken, token.RefreshToken });
-	}
-
-	[HttpPost]
-	[Route("refresh")]
-	public IActionResult Refresh([FromBody] AuthVO authVO) {
-		if (authVO == null)
-			return BadRequest(new ErrorModel("Solicitação invalida."));
-
-		try {
-			var token = _service.ValidadeCredentials(authVO);
-			if (token.ErrorMessage != null)
-				return BadRequest(new ErrorModel(token.ErrorMessage));
-
-			return Ok(new { token.AccessToken, token.RefreshToken });
-		} catch {
-			return BadRequest(new ErrorModel("Realizar novo login para continuar."));
-		}
+		return Ok(new { token.AccessToken });
 	}
 
 	[HttpPut]
@@ -120,20 +103,6 @@ public class AuthController : ControllerBase {
 	//! ////////////////////////////////////////////////////////////////////////////////////
 	//? bloco com controladores que precisam autorização
 	//! ////////////////////////////////////////////////////////////////////////////////////	
-	[HttpPut]
-	[Authorize]
-	[Route("revoke")]
-	public IActionResult Revoke() {
-		var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-		if (userId == null)
-			return Ok("Erro ao revogar o token.");
-
-		Guid.TryParse(userId.Value, out Guid id);
-		var result = _service.RevokeToken(id);
-
-		return Ok("Token revogado.");
-	}
-
 	[HttpGet]
 	[Authorize]
 	[Route("")]

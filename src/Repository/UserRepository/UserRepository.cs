@@ -13,15 +13,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository {
 		return _context.Users.FirstOrDefault(u => (u.Email == user.Email) && (u.Password == user.Password)); //!senha deve vir tratada do service
 	}
 
-	public bool RevokeToken(Guid Id) {
-		var user = _context.Users.SingleOrDefault(u => u.id == Id);
-		if (user == null) return false;
-
-		user.RefreshToken = null;
-		_context.SaveChanges();
-		return true;
-	}
-
 	public User FindByEmail(string email) {
 		return _context.Users.SingleOrDefault(u => u.Email == email);
 	}

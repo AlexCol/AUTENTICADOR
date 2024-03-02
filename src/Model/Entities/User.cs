@@ -6,17 +6,14 @@ namespace AUTENTICADOR.src.Model.Entities;
 [Table("users")]
 public class User : BaseEntity {
 	public User() {
-		this.RefreshTokenExpiryTime = DateTime.Now;
 		this.Activated = false;
 	}
 
-	public User(string email, string firstName, string lastName, string password, string refreshToken, DateTime refreshTokenExpiryTime) {
+	public User(string email, string firstName, string lastName, string password) {
 		this.Email = email;
 		this.FirstName = firstName;
 		this.LastName = lastName;
 		this.Password = password;
-		this.RefreshToken = refreshToken;
-		this.RefreshTokenExpiryTime = refreshTokenExpiryTime;
 		this.Activated = false;
 	}
 
@@ -31,12 +28,6 @@ public class User : BaseEntity {
 
 	[Column("ds_password")]
 	public string Password { get; set; }
-
-	[Column("ds_refresh_token")]
-	public string RefreshToken { get; set; }
-
-	[Column("dt_refresh_token_expiry_time")]
-	public DateTime RefreshTokenExpiryTime { get; set; }
 
 	[Column("sn_activated")]
 	public Boolean Activated { get; set; }

@@ -32,64 +32,24 @@ public class LoginService : ILoginService {
 	}
 
 	public AuthVO ValidadeCredentials(UserLoginVO userCredentials) {
-		if (userCredentials == null) return new AuthVO("Não enviados dados para autenticação.");
+		if (userCredentials == null) return new AuthVO(null, "Não enviados dados para autenticação.");
 
 		userCredentials.Password = _crypto.ComputeHash(userCredentials.Password, SHA256.Create());
 		var user = _userRepository.ValidadeCredentials(userCredentials);
-		if (user == null) return new AuthVO("Usuário ou senha invalidos.");
+		if (user == null) return new AuthVO(null, "Usuário ou senha invalidos.");
 
-		if (!user.Activated) return new AuthVO("Usuário inativo. Verificar seu email e clicar no link para ativação da conta.");
+		if (!user.Activated) return new AuthVO(null, "Usuário inativo. Verificar seu email e clicar no link para ativação da conta.");
 
 		var claims = new List<Claim>() {
 						new Claim("UserId", user.id.ToString())
 				};
 		var accessToken = _tokenService.GenerateAccesToken(claims);
-		var refreshToken = _tokenService.GenerateRefreshToken();
-		user.RefreshToken = refreshToken;
-		user.RefreshTokenExpiryTime = DateTime.Now.ToLocalTime().AddDays(_tokenModel.DaysToExpire);
+
 		user.ActivationToken = null;
 
 		_userRepository.Update(user);
 
-		return new AuthVO(
-			accessToken,
-			refreshToken
-		);
-	}
-
-	public AuthVO ValidadeCredentials(AuthVO token) {
-		var accessToken = token.AccessToken;
-		var refreshToken = token.RefreshToken;
-		var claims = _tokenService.GetClaimsFromExpiredToken(accessToken);
-
-		var idClaim = claims.FirstOrDefault(c => c.Type == "UserId");
-		if (idClaim == null) return new AuthVO("Id do usuário não encontrado.");
-
-		Guid.TryParse(idClaim.Value, out Guid id);
-		var user = _userRepository.FindById(id);
-
-		if (
-			user == null || //usuário não encontrado
-			user.RefreshToken != refreshToken || //refresh token invalido
-			user.RefreshTokenExpiryTime <= DateTime.Now) //data do refreshtoken expirada
-		{
-			return new AuthVO("Favor realizar novo login.");
-		}
-
-		accessToken = _tokenService.GenerateAccesToken(claims);
-		refreshToken = _tokenService.GenerateRefreshToken();
-
-		user.RefreshToken = refreshToken;
-		_userRepository.Update(user);
-
-		return new AuthVO(
-			accessToken,
-			refreshToken
-		);
-	}
-
-	public bool RevokeToken(Guid id) {
-		return _userRepository.RevokeToken(id);
+		return new AuthVO(accessToken);
 	}
 
 	//!activate user

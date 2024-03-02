@@ -26,9 +26,6 @@ public class PostgreContext : DbContext {
 				.HasDatabaseName("uk_Email")
 				.IsUnique(true);
 		modelBuilder.Entity<User>()
-				.HasIndex(u => u.RefreshToken)
-				.HasDatabaseName("idx_refresh");
-		modelBuilder.Entity<User>()
 				.HasIndex(u => u.ActivationToken)
 				.IsUnique()
 				.HasDatabaseName("uk_activateToken");

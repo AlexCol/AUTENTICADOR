@@ -33,15 +33,6 @@ namespace AUTENTICADOR.src.Services.TokenService {
 			return tokenString;
 		}
 
-		//! Método para gerar um token de atualização
-		public string GenerateRefreshToken() {
-			var randomNumber = new byte[32];
-			using (var rng = RandomNumberGenerator.Create()) {
-				rng.GetBytes(randomNumber);
-				return Convert.ToBase64String(randomNumber);
-			}
-		}
-
 		//! Método para obter as reivindicações de um token JWT expirado
 		public IEnumerable<Claim> GetClaimsFromExpiredToken(string token) {
 			var validToken = validateToken(token);
