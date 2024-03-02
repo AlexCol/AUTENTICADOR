@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "https": {
+    "AUTENTICADOR": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
