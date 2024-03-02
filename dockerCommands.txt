@@ -1,3 +1,0 @@
-docker-compose up -d --build
-
-arquivo csproj não pode estar todo em caixa alta, senão a extensão do docket não reconhece ele pra pegar os dados e montar os arquivos docker
