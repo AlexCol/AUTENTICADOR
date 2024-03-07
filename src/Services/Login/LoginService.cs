@@ -41,7 +41,8 @@ public class LoginService : ILoginService {
 		if (!user.Activated) return new AuthVO(null, "Usuário inativo. Verificar seu email e clicar no link para ativação da conta.");
 
 		var claims = new List<Claim>() {
-						new Claim("UserId", user.id.ToString())
+						new Claim("UserId", user.id.ToString()),
+						new Claim("UserName", user.FirstName)
 				};
 		var accessToken = _tokenService.GenerateAccesToken(claims);
 

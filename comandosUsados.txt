@@ -31,3 +31,7 @@ dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
 /*para a migration*/
     dotnet ef migrations add 'minhaPrimeiraMigration'
     dotnet ef database update
+
+
+
+dotnet publish --configuration Release
