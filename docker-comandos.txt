@@ -1,0 +1,7 @@
+docker run -d --name db_postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=ale123 -e POSTGRES_DB=autenticacao -p 5432:5432 postgres
+
+
+docker-compose up -d --build
+
+--pra autenticar apenas um deles
+docker-compose up --no-deps --build autenticador

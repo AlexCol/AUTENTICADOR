@@ -40,7 +40,8 @@ public class CryptoService : ICryptoService {
 
 				ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-				using (MemoryStream msDecrypt = new MemoryStream(Convert.FromBase64String(encryptedValue)))
+				var UrlSafingValue = encryptedValue.Replace('-', '+').Replace('_', '/');
+				using (MemoryStream msDecrypt = new MemoryStream(Convert.FromBase64String(UrlSafingValue)))
 				using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
 				using (StreamReader srDecrypt = new StreamReader(csDecrypt)) {
 					var decryptedValue = srDecrypt.ReadToEnd();
@@ -80,6 +81,13 @@ public class CryptoService : ICryptoService {
 				}
 
 				byte[] encryptedBytes = msEncrypt.ToArray();
+				// Substituir os caracteres + por - e / por _
+				for (int i = 0; i < encryptedBytes.Length; i++) {
+					if (encryptedBytes[i] == '+')
+						encryptedBytes[i] = (byte)'-';
+					else if (encryptedBytes[i] == '/')
+						encryptedBytes[i] = (byte)'_';
+				}
 				return Convert.ToBase64String(encryptedBytes);
 			}
 		}
