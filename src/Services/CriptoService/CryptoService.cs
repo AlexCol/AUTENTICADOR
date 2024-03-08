@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace AUTENTICADOR.src.Services.CryptoService;
 
@@ -81,14 +82,8 @@ public class CryptoService : ICryptoService {
 				}
 
 				byte[] encryptedBytes = msEncrypt.ToArray();
-				// Substituir os caracteres + por - e / por _
-				for (int i = 0; i < encryptedBytes.Length; i++) {
-					if (encryptedBytes[i] == '+')
-						encryptedBytes[i] = (byte)'-';
-					else if (encryptedBytes[i] == '/')
-						encryptedBytes[i] = (byte)'_';
-				}
-				return Convert.ToBase64String(encryptedBytes);
+				var UrlSafingValue = Convert.ToBase64String(encryptedBytes).Replace('+', '-').Replace('/', '_');
+				return UrlSafingValue;
 			}
 		}
 	}
