@@ -3,18 +3,6 @@
 version: '3.4'
 
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      TZ: America/Sao_Paulo
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ale123
-      POSTGRES_DB: autenticacao
-    ports:
-      - 5432:5432
-    networks:
-      - rede_autenticador
   autenticador:
     image: autenticador
     build:
@@ -25,11 +13,3 @@ services:
     environment:
       TZ: America/Sao_Paulo
       ASPNETCORE_ENVIRONMENT: Production
-    depends_on:
-      - db
-    networks:
-      - rede_autenticador
-
-networks:
-  rede_autenticador: 
-    driver: bridge

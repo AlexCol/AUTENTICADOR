@@ -5,3 +5,14 @@ docker-compose up -d --build
 
 --pra autenticar apenas um deles
 docker-compose up --no-deps --build autenticador
+
+//pra ver as imagens
+docker images
+
+dockerhub
+docker login docker.io
+
+docker tag autenticador:latest wackoalex/autenticador:latest
+
+pra subir
+docker push wackoalex/autenticador:latest

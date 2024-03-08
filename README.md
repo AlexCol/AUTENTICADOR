@@ -13,9 +13,16 @@ Sistema para controle de autenticações.
 4. Execute o comando:
 > dotnet watch run
 
+
 # Fluxo para testes 
 #### utilizado {{baseUrl}} para subistituir o que for informado em launchSettings.json
+___***IMPORTANTE***___: Os endpoints foram atualizados de modo a receber apenas dados encryptados. Assim, foi mantida a apresentação atual, mas esses dados devem ser encrytados e enviados no formado:
+> {
+    "data": "meus dados encryptados"
+}
 
+Ao fim da apresentação dos endpoints, foram acrescentados mais dois, de encryp e decrytp para uso e testes. Assim, pode pegar o json desejado, usado no encrypt que ele vai retornar os dados cryptografados para usar nos demais endpoints, e o decrypt para decryptografar.
+______
 **Registro - Post**
 > {{baseUrl}}/user/register?origin=siteQueMandouARequest
 
@@ -127,3 +134,18 @@ body:
 }
 
 Token é o Activationtoken (caso se busque no banco de dados), ele é enviado no email na requisição do RecoverPasswordRequest.
+
+**Encrypt - Get**
+{{baseUrl}}/crypto/encrypt
+body: qualquer json
+
+O endopint retornará os dados encryptados em uma unica string.
+
+**Decrypt - Get**
+{{baseUrl}}/crypto/decrypt
+body:
+> {
+    "data": "dados cryptografados
+}
+
+Vai ser retornado uma string com os dados sem cryptografia.
