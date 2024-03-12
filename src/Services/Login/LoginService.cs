@@ -42,7 +42,9 @@ public class LoginService : ILoginService {
 
 		var claims = new List<Claim>() {
 						new Claim("UserId", user.id.ToString()),
-						new Claim("UserName", user.FirstName)
+						new Claim("UserName", user.FirstName),
+						new Claim("UserEMail", user.Email)
+
 				};
 		var accessToken = _tokenService.GenerateAccesToken(claims);
 
